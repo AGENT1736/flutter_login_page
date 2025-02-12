@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:dio/dio.dart';
 
 class AuthService {
@@ -20,13 +18,23 @@ class AuthService {
   }
 
   //this is the register function that uses the base url in dio
-  Future<Map<String, dynamic>> register(String email, String password) async {
+  Future<Map<String, dynamic>> register(
+      String email, String username, String password) async {
     try {
-      Response response = await dio
-          .post("/register", data: {"email": email, "password": password});
+      Response response = await dio.post("/register",
+          data: {"email": email, "username": username, "password": password});
       return response.data;
     } catch (e) {
       return {"Error": e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> logout() async {
+    try {
+      Response response = await dio.post("/logout");
+      return response.data;
+    } catch (e) {
+      return {"error": e.toString()};
     }
   }
 }

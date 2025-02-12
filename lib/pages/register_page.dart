@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:ict_hub_session/pages/login_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ict_hub_session/cubit/auth_cubit.dart';
+import 'package:ict_hub_session/cubit/auth_states.dart';
+//import 'package:ict_hub_session/pages/login_page.dart';
 
 import '../Widgets/custom_form_field.dart';
 
 class RegistrationScreen extends StatefulWidget {
-  const RegistrationScreen({super.key});
+  RegistrationScreen({super.key});
 
   @override
   State<RegistrationScreen> createState() => _RegistrationScreenState();
@@ -12,12 +15,16 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   bool isFirstObscured = false;
+
   bool isSecondObscured = false;
 
   final TextEditingController emailController = TextEditingController();
+
   final TextEditingController passwordController = TextEditingController();
+
   final TextEditingController confirmPasswordController =
       TextEditingController();
+
   final TextEditingController usernameController = TextEditingController();
 
   @override
@@ -108,7 +115,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   formEntry: "Confirm Password",
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "Confirm password is required";
+                      return "You need to confirm your password!";
                     }
                     if (value != passwordController.text) {
                       return "Passwords do not match";
@@ -119,18 +126,53 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   obscureText: isSecondObscured,
                 ),
               ),
+
+              //this is the bloc consumer widget for the button that is used to register an account
               Padding(
                 padding: const EdgeInsets.only(top: 25.0),
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: Size(300, 50),
-                    backgroundColor: Colors.lightGreen[600],
-                  ),
-                  child: Text(
-                    "Register",
-                    style: TextStyle(color: Colors.white),
-                  ),
+                child: BlocConsumer<AuthCubit, AuthStates>(
+                  listener: (context, state) {
+                    if (state is AuthSuccessState) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Registration successful")));
+                    } else if (state is AuthErrorState) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content:
+                              Text("Registration Failed, Please Try again!")));
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is AuthLoadingState) {
+                      return const CircularProgressIndicator();
+                    }
+                    return ElevatedButton(
+                      onPressed: () {
+                        String username = usernameController.toString();
+                        String email = emailController.toString();
+                        String password = passwordController.toString();
+                        String confirmPassword =
+                            confirmPasswordController.toString();
+
+                        if (password == confirmPassword) {
+                          context
+                              .read<AuthCubit>()
+                              .register(email, username, password);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Passwords do not match!")),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: Size(300, 50),
+                        backgroundColor: Colors.lightGreen[600],
+                      ),
+                      child: Text(
+                        "Register",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    );
+                  },
                 ),
               ),
               Padding(
