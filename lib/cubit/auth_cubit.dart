@@ -12,20 +12,17 @@ class AuthCubit extends Cubit<AuthStates> {
 
   AuthCubit(this.authService) : super(AuthInitialState());
 
-  //Register with supabase
+  //Register with dio backend
   Future<void> register(String email, String username, String password) async {
     emit(AuthLoadingState());
 
     try {
-      final response = await supabase.auth.signUp(
-        email: email,
-        password: password,
-      );
+      final response = await authService.register(email, username, password);
 
-      if (response.user != null) {
-        emit(AuthSuccessState());
-      } else {
+      if (response.containsKey("error")) {
         emit(AuthErrorState());
+      } else {
+        emit(AuthSuccessState());
       }
     } catch (e) {
       emit(AuthErrorState());
@@ -47,9 +44,18 @@ class AuthCubit extends Cubit<AuthStates> {
     }
   }
 
-  //logout with supabase
   Future<void> logout() async {
-    await supabase.auth.signOut();
-    emit(AuthInitialState());
+    emit(AuthLoadingState());
+
+    try {
+      final response = await authService.logout();
+      if (response.containsKey("error")) {
+        emit(AuthErrorState());
+      } else {
+        emit(AuthInitialState());
+      }
+    } catch (e) {
+      emit(AuthErrorState());
+    }
   }
 }
