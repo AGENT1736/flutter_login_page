@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ict_hub_session/pages/page_one.dart';
+import 'package:ict_hub_session/pages/login_page.dart';
 
 import '../Widgets/custom_form_field.dart';
 
@@ -13,6 +13,12 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   bool isFirstObscured = false;
   bool isSecondObscured = false;
+
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +49,34 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
-                child: CustomFormField(formEntry: "Username"),
+                child: CustomFormField(
+                  formEntry: "Username",
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "username is required";
+                    }
+                    return null;
+                  },
+                  textEditingController: usernameController,
+                ),
               ),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
-                child: CustomFormField(formEntry: "Email"),
+                child: CustomFormField(
+                  formEntry: "Email",
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Email is required!";
+                    }
+                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                        .hasMatch(value)) {
+                      return "Enter a valid email";
+                    }
+                    return null;
+                  },
+                  textEditingController: emailController,
+                ),
               ),
               Padding(
                 padding:
@@ -57,7 +85,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   suffixIconData:
                       isFirstObscured ? Icons.visibility : Icons.visibility_off,
                   formEntry: "Password",
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Password is required!";
+                    }
+                    if (value.length < 6) {
+                      return "Password must be at least 6 characters!";
+                    }
+                    return null;
+                  },
                   obscureText: isFirstObscured,
+                  textEditingController: passwordController,
                 ),
               ),
               Padding(
@@ -68,6 +106,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ? Icons.visibility
                       : Icons.visibility_off,
                   formEntry: "Confirm Password",
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Confirm password is required";
+                    }
+                    if (value != passwordController.text) {
+                      return "Passwords do not match";
+                    }
+                    return null;
+                  },
+                  textEditingController: confirmPasswordController,
                   obscureText: isSecondObscured,
                 ),
               ),

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:ict_hub_session/pages/page_one.dart';
+import 'package:ict_hub_session/pages/login_page.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+const supabaseUrl = 'https://mbpadqmjzirzxibjstoe.supabase.co';
+const supabaseKey = String.fromEnvironment('SUPABASE_KEY');
+Future<void> main() async {
+  await Supabase.initialize(url: supabaseUrl, anonKey: supabaseKey);
   runApp(const MyApp());
 }
 
@@ -10,7 +14,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       home: LoginPage(),
     );
   }
