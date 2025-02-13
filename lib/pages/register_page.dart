@@ -5,6 +5,7 @@ import 'package:ict_hub_session/cubit/auth_states.dart';
 //import 'package:ict_hub_session/pages/login_page.dart';
 
 import '../Widgets/custom_form_field.dart';
+import '../features/bottom_nav.dart';
 
 class RegistrationScreen extends StatefulWidget {
   RegistrationScreen({super.key});
@@ -135,6 +136,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     if (state is AuthSuccessState) {
                       ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text("Registration successful")));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BottomNavPage()));
                     } else if (state is AuthErrorState) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content:

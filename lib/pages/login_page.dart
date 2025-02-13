@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ict_hub_session/Widgets/custom_form_field.dart';
 import 'package:ict_hub_session/cubit/auth_states.dart';
+import 'package:ict_hub_session/features/bottom_nav.dart';
 import 'package:ict_hub_session/pages/register_page.dart';
 import '../cubit/auth_cubit.dart';
 
@@ -73,6 +74,9 @@ class LoginPage extends StatelessWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Login Successful!")),
                   );
+
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => BottomNavPage()));
                 } else if (state is AuthErrorState) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
